@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Mono New Tab Clock",
+  "version": "1.0.0",
+  "description": "新しいタブに時計を表示します",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "toggle-settings": {
+      "description": "設定パネルの表示/非表示を切り替え"
+    }
+  }
+}

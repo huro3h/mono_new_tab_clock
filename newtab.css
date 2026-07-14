@@ -1,0 +1,178 @@
+/* 同梱フォント（可変フォント：1ファイルで全ウェイト対応） */
+@font-face {
+  font-family: "Montserrat";
+  src: url("fonts/Montserrat.ttf") format("truetype");
+  font-weight: 100 900;
+}
+@font-face {
+  font-family: "JosefinSans";
+  src: url("fonts/JosefinSans.ttf") format("truetype");
+  font-weight: 100 700;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("fonts/Roboto.ttf") format("truetype");
+  font-weight: 100 900;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #4a4a4a;
+  color: #f5f5f5;
+}
+
+/* システム標準フォント（フォント選択で使用） */
+:root {
+  --system-font: -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+body {
+  font-family: var(--system-font); /* 既定書体（JSで上書き） */
+}
+
+/* 時計本体：JSで位置を絶対配置。基準点はブロックの中心 */
+#clock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  user-select: none;      /* ドラッグ中に文字が選択されないように */
+  cursor: grab;
+  --scale: 1;             /* 文字サイズ倍率（スライダーで変更） */
+}
+#clock.dragging {
+  cursor: grabbing;
+}
+#time {
+  font-size: calc(8rem * var(--scale));
+  font-weight: 100;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums; /* 数字幅を固定してガタつき防止 */
+  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 時と分の区切り：CSSで真円のドット2つを描画（フォント非依存） */
+.colon {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.28em;
+  margin: 0 0.18em;
+}
+.colon::before,
+.colon::after {
+  content: "";
+  width: 0.045em;
+  height: 0.045em;
+  border-radius: 50%;
+  background: currentColor;
+}
+#date {
+  font-size: calc(1.8rem * var(--scale));
+  font-weight: 300;
+  opacity: 0.75;
+  margin-top: 0.5rem;
+}
+
+/* 歯車ボタン（左下・常時表示） */
+#gear-btn {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5f5f5;
+  background: rgba(0, 0, 0, 0.25);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.2s, transform 0.3s;
+}
+#gear-btn:hover {
+  opacity: 0.9;
+}
+body.settings-open #gear-btn {
+  opacity: 0.95;
+  transform: rotate(60deg); /* 開いている間は少し回転 */
+}
+
+/* 操作パネル：歯車の上に表示 */
+#controls {
+  position: fixed;
+  bottom: 66px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+}
+#controls[hidden] {
+  display: none;
+}
+
+/* 設定項目：ラベル＋操作を2列グリッドで整列 */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 12px 24px;
+}
+
+/* ボタン行：Reset を主役に、Export/Import は控えめ */
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.button-row #reset-btn {
+  flex: 1;              /* Reset は横いっぱいに */
+}
+.button-row .small {
+  flex: 0 0 auto;
+  padding: 3px 8px;     /* 小さめ */
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+.button-row .small:hover {
+  opacity: 1;
+}
+#controls > * {
+  flex-shrink: 0;       /* 要素を縮めない（文字の縦折り返しを防ぐ） */
+}
+#controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;  /* ラベル文字を折り返さない */
+}
+#controls button {
+  white-space: nowrap;
+}
+#controls input[type="range"] {
+  width: 130px;
+  cursor: pointer;
+}
+#controls button {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: #f5f5f5;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+}
+#controls button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Tab</title>
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <div id="clock">
+    <div id="time"><span id="hours">--</span><span class="colon"></span><span id="minutes">--</span></div>
+    <div id="date">--</div>
+  </div>
+
+  <button id="gear-btn" type="button" title="設定" aria-label="設定" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+
+  <div id="controls" hidden>
+    <div class="settings-grid">
+      <label>
+        <span>Background</span>
+        <input id="bg-slider" type="range" min="0" max="100" step="1"
+               aria-label="Background brightness">
+      </label>
+      <label>
+        <span>Size</span>
+        <input id="size-slider" type="range" min="50" max="400" step="1"
+               aria-label="Text size">
+      </label>
+      <label>
+        <span>Opacity</span>
+        <input id="opacity-slider" type="range" min="5" max="100" step="1"
+               aria-label="Text opacity">
+      </label>
+      <label>
+        <span>Font</span>
+        <select id="font-select" aria-label="Font">
+          <option value="system">System</option>
+          <option value="Montserrat">Montserrat</option>
+          <option value="JosefinSans">Josefin Sans</option>
+          <option value="Roboto">Roboto</option>
+        </select>
+      </label>
+    </div>
+    <div class="button-row">
+      <button id="reset-btn" type="button" title="Reset to defaults">Reset</button>
+      <button id="export-btn" class="small" type="button" title="Export settings as JSON">Export</button>
+      <button id="import-btn" class="small" type="button" title="Import settings from JSON">Import</button>
+    </div>
+    <input id="import-file" type="file" accept="application/json,.json" hidden>
+  </div>
+
+  <script src="newtab.js"></script>
+</body>
+</html>
