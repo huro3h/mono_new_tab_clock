@@ -1,0 +1,2 @@
+# mono_new_tab_clock
+新しいタブに日時を表示させるChrome拡張機能
