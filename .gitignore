@@ -1,0 +1,39 @@
+# ===== macOS =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# ===== ログ / 一時ファイル =====
+*.log
+*.tmp
+*.swp
+*~
+
+# ===== エディタ / IDE =====
+# JetBrains (RubyMine など)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.history/
+
+# Zed
+.zed/
+
+# ===== エクスポートした設定ファイル（個人環境依存） =====
+mono_new_tab_clock-settings.json
