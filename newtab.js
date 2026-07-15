@@ -30,7 +30,7 @@ setInterval(render, 1000); // 毎秒更新
 
 // ================= 設定（背景・文字サイズ・位置） =================
 const KEYS = { bg: "bgLevel", size: "sizeLevel", pos: "clockPos", font: "font", opacity: "opacity" };
-const DEFAULTS = { bg: 40, size: 150, pos: { x: 50, y: 50 }, font: "system", opacity: 40 };
+const DEFAULTS = { bg: 23, size: 150, pos: { x: 50, y: 50 }, font: "system", opacity: 10 };
 const SYSTEM_STACK = '-apple-system, "Helvetica Neue", Arial, sans-serif';
 
 const clock = document.getElementById("clock");
@@ -141,15 +141,19 @@ function applyPosition(xPercent, yPercent) {
   clock.style.top = `${yPercent}%`;
 }
 
+// 起動時に必ず位置を確定させる（保存値が無ければデフォルト中央）。
+// これでインラインスタイルが常にセットされ、Export時に値がnullにならない。
+let initialPos = { ...DEFAULTS.pos };
 const savedPos = localStorage.getItem(KEYS.pos);
 if (savedPos) {
   try {
     const { x, y } = JSON.parse(savedPos);
-    applyPosition(x, y);
+    if (Number.isFinite(x) && Number.isFinite(y)) initialPos = { x, y };
   } catch (e) {
     /* 壊れた値は無視してデフォルト中央 */
   }
 }
+applyPosition(initialPos.x, initialPos.y);
 
 let dragging = false;
 
@@ -210,7 +214,11 @@ function getCurrentSettings() {
     size: Number(sizeSlider.value),
     opacity: Number(opacitySlider.value),
     font: fontSelect.value,
-    pos: { x: parseFloat(clock.style.left), y: parseFloat(clock.style.top) }
+    pos: {
+      // インラインスタイルが未設定でも NaN→null にならないようデフォルトで補完
+      x: Number.isFinite(parseFloat(clock.style.left)) ? parseFloat(clock.style.left) : DEFAULTS.pos.x,
+      y: Number.isFinite(parseFloat(clock.style.top)) ? parseFloat(clock.style.top) : DEFAULTS.pos.y
+    }
   };
 }
 
@@ -220,7 +228,11 @@ function applySettings(s) {
   const size = Number.isFinite(Number(s.size)) ? Number(s.size) : DEFAULTS.size;
   const opacity = Number.isFinite(Number(s.opacity)) ? Number(s.opacity) : DEFAULTS.opacity;
   const font = typeof s.font === "string" ? s.font : DEFAULTS.font;
-  const pos = (s.pos && Number.isFinite(Number(s.pos.x)) && Number.isFinite(Number(s.pos.y)))
+  // s.pos.x/y が null の場合、Number(null)===0 で isFinite を誤って通過するため
+  // 明示的に null/undefined を弾いてからチェックする
+  const pos = (s.pos &&
+    s.pos.x != null && Number.isFinite(Number(s.pos.x)) &&
+    s.pos.y != null && Number.isFinite(Number(s.pos.y)))
     ? { x: Number(s.pos.x), y: Number(s.pos.y) }
     : DEFAULTS.pos;
 
