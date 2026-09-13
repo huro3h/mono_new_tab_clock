@@ -118,6 +118,30 @@ const DEFAULTS = { bg: 23, size: 150, pos: { x: 50, y: 50 }, font: "system", opa
   block in newtab.css (`font-weight: 100 900`), and add an `<option>` to the font `<select>`.
 - **Change time/date format**: edit `render()` in newtab.js.
 
+## Icon
+
+The format (no background fill, 24x24 viewBox, single-colour stroke) and the
+export steps are a workspace-wide convention — see **rule 5** of
+`~/projects/.claude/skills/projects-workspace/SKILL.md` (skill:
+`projects-workspace`). Don't restate the steps here.
+
+Project-specific: this extension uses grey **`#3C4043`**, not the workspace
+default `#1A73E8`. "Mono" means greyscale, so a blue icon would contradict the
+product identity. Keep any redraw in grey. The extension has no `action`, so
+`manifest.json` declares `icons` only — there is no `action.default_icon`.
+
+## Versioning & release notes
+
+The process (Keep a Changelog + SemVer, `CHANGELOG.md` with `[Unreleased]`,
+`manifest.json` version bump, annotated tag) is the workspace-wide convention —
+see **rule 4** of the same skill. Don't restate the steps here.
+
+Project-specific: **`1.0.0` is a bootstrap release** — the repo had no changelog
+and no tags before 2026-09-13, so the whole history up to that point (plus the
+icon added the same day) was cut as a single "初回リリース" entry rather than a
+per-commit backfill. `1.0.0` is the first tag the repo has ever had.
+`CHANGELOG.md` has no `[x.y.z]: <url>` compare-link definitions at the bottom.
+
 ## Install / test / iterate
 
 1. `chrome://extensions` -> enable Developer mode -> "Load unpacked" -> select the folder.
