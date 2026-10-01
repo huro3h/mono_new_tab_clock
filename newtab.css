@@ -1,20 +1,3 @@
-/* 同梱フォント（可変フォント：1ファイルで全ウェイト対応） */
-@font-face {
-  font-family: "Montserrat";
-  src: url("fonts/Montserrat.ttf") format("truetype");
-  font-weight: 100 900;
-}
-@font-face {
-  font-family: "JosefinSans";
-  src: url("fonts/JosefinSans.ttf") format("truetype");
-  font-weight: 100 700;
-}
-@font-face {
-  font-family: "Roboto";
-  src: url("fonts/Roboto.ttf") format("truetype");
-  font-weight: 100 900;
-}
-
 html, body {
   margin: 0;
   height: 100%;
@@ -23,30 +6,21 @@ html, body {
   color: #f5f5f5;
 }
 
-/* システム標準フォント（フォント選択で使用） */
-:root {
-  --system-font: -apple-system, "Helvetica Neue", Arial, sans-serif;
-}
 body {
-  font-family: var(--system-font); /* 既定書体（JSで上書き） */
+  font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* 時計本体：JSで位置を絶対配置。基準点はブロックの中心 */
+/* 時計本体：画面中央に固定 */
 #clock {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  user-select: none;      /* ドラッグ中に文字が選択されないように */
-  cursor: grab;
-  --scale: 1;             /* 文字サイズ倍率（スライダーで変更） */
-}
-#clock.dragging {
-  cursor: grabbing;
+  user-select: none;
 }
 #time {
-  font-size: calc(8rem * var(--scale));
+  font-size: 12rem;
   font-weight: 100;
   letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums; /* 数字幅を固定してガタつき防止 */
@@ -73,7 +47,7 @@ body {
   background: currentColor;
 }
 #date {
-  font-size: calc(1.8rem * var(--scale));
+  font-size: 2.7rem;
   font-weight: 300;
   opacity: 0.75;
   margin-top: 0.5rem;
@@ -122,14 +96,14 @@ body.settings-open #gear-btn {
   display: none;
 }
 
-/* 左カラム：スライダー3つを縦並び */
+/* 左カラム：スライダーを縦並び */
 .panel-left {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* 右カラム：Font / Reset / Export・Import を縦並び */
+/* 右カラム：Reset / Export・Import を縦並び */
 .panel-right {
   display: flex;
   flex-direction: column;
@@ -162,20 +136,10 @@ body.settings-open #gear-btn {
   font-size: 0.8rem;
   white-space: nowrap;
 }
-/* Font ラベル：「Font」＋セレクトを右カラム幅いっぱいに */
-.font-label {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
 #controls button {
   white-space: nowrap;
 }
-#controls input[type="range"],
-#controls select {
+#controls input[type="range"] {
   width: 100%;          /* 操作列いっぱいに広げる（スライダーを長く） */
   cursor: pointer;
 }

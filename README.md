@@ -12,18 +12,15 @@
 
 - **時刻**: 24 時間表記の `HH:MM`（秒なし）。毎秒更新するので分の切り替わりが即座に反映されます。
 - **日付**: `Tuesday, July 14` のような英語表記。
-- **コロン**: フォントの文字ではなく CSS の真円 2 つで描画。どのフォントでも丸く表示され、
-  サイズ・透明度に自動追従します。
+- **コロン**: フォントの文字ではなく CSS の真円 2 つで描画。システムフォントのコロンに左右されず
+  丸く表示され、透明度に自動追従します。
+- **表示**: 時計は画面中央に固定。フォントはシステムフォント、サイズも固定です。
 - **設定パネル**: 既定では非表示。左下の歯車アイコン、またはキーボードショートカットで開閉します。
 - **カスタマイズ**（すべて `localStorage` に保存）:
   - **Background**: 背景の明るさ（グレースケール）
-  - **Size**: 文字サイズ
   - **Opacity**: 時計の透明度
-  - **Font**: System / Montserrat / Josefin Sans / Roboto
-  - **位置**: 時計をドラッグして移動（ビューポート比率で保存され、リサイズしてもずれにくい）
   - **Reset / Export / Import**: 既定値へのリセット、設定の JSON 書き出し・読み込み
-- **オフライン動作**: フォントは `.ttf` を同梱し `@font-face` で読み込むため、外部 CDN への
-  通信は一切ありません（プライバシー配慮）。
+- **オフライン動作**: 外部 CDN などへの通信は一切ありません（プライバシー配慮）。
 - **権限リクエストなし**: すべてローカルで完結します。
 
 ## ディレクトリ構成
@@ -34,11 +31,7 @@ mono_new_tab_clock/
 ├── newtab.html        # マークアップ（時計 + 歯車ボタン + 設定パネル）
 ├── newtab.css         # スタイル一式
 ├── newtab.js          # 時計描画 + 設定ロジック（localStorage）
-├── background.js      # service worker（ショートカット命令を newtab へメッセージ送信）
-└── fonts/             # 同梱フォント（オフライン、通信なし）
-    ├── Montserrat.ttf
-    ├── JosefinSans.ttf
-    └── Roboto.ttf
+└── background.js      # service worker（ショートカット命令を newtab へメッセージ送信）
 ```
 
 ## 仕組み（アーキテクチャ）
@@ -72,8 +65,6 @@ mono_new_tab_clock/
 ## 開発メモ
 
 - インライン `<script>` / `onclick` は使わない（MV3 CSP がブロックします）。
-- フォントを追加する場合は、可変 `.ttf` を `fonts/` に置き、`newtab.css` に `@font-face` を
-  追加し、`<select>` に `<option>` を足します。
 - 設定項目（スライダー等）を追加する場合は、newtab.js の `KEYS` / `DEFAULTS` / `applyX()` /
   reset ハンドラ / `getCurrentSettings()` / `applySettings()` をすべて更新して、保存・リセット・
   Export/Import の整合を保ってください。
