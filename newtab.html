@@ -39,10 +39,15 @@
         <button id="export-btn" class="small" type="button" title="Export settings as JSON">Export</button>
         <button id="import-btn" class="small" type="button" title="Import settings from JSON">Import</button>
       </div>
+      <div class="export-target">
+        <span id="export-target-name">Export to: not set</span>
+        <button id="export-change" class="link" type="button" title="Choose another export file">Change</button>
+      </div>
     </div>
     <input id="import-file" type="file" accept="application/json,.json" hidden>
   </div>
 
+  <script src="export-file.js"></script>
   <script src="newtab.js"></script>
 </body>
 </html>

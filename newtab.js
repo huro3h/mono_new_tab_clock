@@ -39,6 +39,8 @@ const resetBtn = document.getElementById("reset-btn");
 const exportBtn = document.getElementById("export-btn");
 const importBtn = document.getElementById("import-btn");
 const importFile = document.getElementById("import-file");
+const exportTargetName = document.getElementById("export-target-name");
+const exportChange = document.getElementById("export-change");
 const gearBtn = document.getElementById("gear-btn");
 const controls = document.getElementById("controls");
 
@@ -136,17 +138,34 @@ function applySettings(s) {
   localStorage.setItem(KEYS.opacity, opacity);
 }
 
-// ---- Export：JSONファイルとしてダウンロード ----
-exportBtn.addEventListener("click", () => {
-  const data = JSON.stringify(getCurrentSettings(), null, 2);
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "mono_new_tab_clock-settings.json";
-  a.click();
-  URL.revokeObjectURL(url);
-});
+// ---- Export：選んだファイルに上書き（export-file.js） ----
+// 拡張機能から見えるのはファイル名だけ（フォルダは分からない）
+function showExportTarget(handle, note) {
+  if (!ExportFile.canPickFile) {
+    exportTargetName.textContent = note || "Export to: Downloads";
+    exportChange.hidden = true;
+    return;
+  }
+  exportTargetName.textContent = note || `Export to: ${handle ? handle.name : "not set"}`;
+}
+
+async function exportSettings(choose) {
+  // git の差分にならないよう、書き出した時刻は入れず末尾に改行を付ける
+  const text = `${JSON.stringify(getCurrentSettings(), null, 2)}\n`;
+  let result;
+  try {
+    result = await ExportFile.write(text, { choose });
+  } catch (e) {
+    showExportTarget(null, "Could not export. Use Change to pick the file again.");
+    return;
+  }
+  if (!result) return; // ダイアログを閉じた
+  showExportTarget(null, `Exported to ${result.name}`);
+}
+
+exportBtn.addEventListener("click", () => exportSettings(false));
+exportChange.addEventListener("click", () => exportSettings(true));
+ExportFile.loadHandle().then((handle) => showExportTarget(handle));
 
 // ---- Import：JSONファイルを読み込んで反映 ----
 importBtn.addEventListener("click", () => importFile.click());

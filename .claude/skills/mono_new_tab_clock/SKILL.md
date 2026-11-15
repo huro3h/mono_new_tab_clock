@@ -22,6 +22,7 @@ mono_new_tab_clock/                                   <- git repo root
 ├── newtab.html        # markup: clock + gear button + settings panel
 ├── newtab.css         # all styling
 ├── newtab.js          # clock rendering + settings logic (localStorage)
+├── export-file.js     # Export target: remembers the picked file handle (IndexedDB), overwrites it
 ├── background.js      # service worker: keyboard-shortcut command -> message to newtab page
 └── .claude/skills/mono_new_tab_clock/SKILL.md   # THIS file — lives in-repo, git-managed
 ```
@@ -72,8 +73,20 @@ just Read this file.
     `gray = 26 + (level/100)*(140-26)`, i.e. `#1a1a1a`(dark) .. `#8c8c8c`(light).
   - **Opacity**: clock opacity. slider 0–100 -> `opacity = level/100`. Affects whole clock.
   - **Reset**: restores DEFAULTS (primary, full-width button).
-  - **Export / Import**: small secondary buttons. Export downloads
-    `mono_new_tab_clock-settings.json`; Import reads a JSON file, validates, applies, saves.
+  - **Export / Import**: small secondary buttons. Import reads a JSON file, validates, applies, saves.
+    **Export overwrites a file the user picked once** (2.1.0, 2026-11-15, user request: the user keeps
+    every ~/projects tool's exported settings in a git repo and wants diffs, so all exporting
+    extensions were aligned to yt-live-helper's approach). `export-file.js` (classic script,
+    `window.ExportFile`) does `showSaveFilePicker` (id `export-file`, suggested name
+    `mono_new_tab_clock-settings.json`) on first use and stores the `FileSystemFileHandle` in IndexedDB
+    `export-file`/`handles`/`exportFile`; later: `queryPermission` → `requestPermission` (after a browser
+    restart) → re-pick if denied. The new tab page is a normal page, so the picker works straight
+    from the click. Below the buttons a small line shows `Export to: <file name>` (only the name is
+    visible, not the folder) and a **Change** link (re-pick + export); after exporting it reads
+    `Exported to <name>`. The file has a trailing newline and no timestamp (it never had one).
+    **Brave has no `showSaveFilePicker`** → falls back to `<a download>` with the fixed name, line
+    reads `Export to: Downloads`, Change hidden. Verified in Brave Nightly (11 checks, picker stubbed
+    with an OPFS handle). **Not verified:** the real dialog and the re-permission prompt in Chrome.
 - **Fixed (not configurable)**, removed 2026-10-02 per user preference — don't re-add:
   - Position: always centered (`#clock` `left/top: 50%` + `translate(-50%,-50%)`), no dragging.
   - Size: fixed at the old default 1.5x (`#time` 12rem, `#date` 2.7rem); no Size slider.
