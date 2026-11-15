@@ -39,7 +39,9 @@ const resetBtn = document.getElementById("reset-btn");
 const exportBtn = document.getElementById("export-btn");
 const importBtn = document.getElementById("import-btn");
 const importFile = document.getElementById("import-file");
-const exportTargetName = document.getElementById("export-target-name");
+const exportDir = document.getElementById("export-dir");
+const exportName = document.getElementById("export-name");
+const exportStatus = document.getElementById("export-status");
 const exportChange = document.getElementById("export-change");
 const gearBtn = document.getElementById("gear-btn");
 const controls = document.getElementById("controls");
@@ -138,34 +140,58 @@ function applySettings(s) {
   localStorage.setItem(KEYS.opacity, opacity);
 }
 
-// ---- Export：選んだファイルに上書き（export-file.js） ----
-// 拡張機能から見えるのはファイル名だけ（フォルダは分からない）
-function showExportTarget(handle, note) {
-  if (!ExportFile.canPickFile) {
-    exportTargetName.textContent = note || "Export to: Downloads";
+// ---- Export：選んだフォルダの、欄で決めたファイル名のファイルに上書き（export-file.js） ----
+// 拡張機能から見えるのはフォルダ名だけ（フルパスは分からない）
+async function showExportTarget() {
+  exportName.value = await ExportFile.loadFileName();
+  if (!ExportFile.canPickFolder) {
+    exportDir.textContent = "Downloads";
     exportChange.hidden = true;
     return;
   }
-  exportTargetName.textContent = note || `Export to: ${handle ? handle.name : "not set"}`;
+  const dir = await ExportFile.loadExportDir();
+  exportDir.textContent = dir ? dir.name : "(folder)";
 }
 
-async function exportSettings(choose) {
+async function exportSettings(chooseDir) {
+  // 欄を書き換えたままボタンを押したときも、その名前で書き出す
+  try {
+    exportName.value = await ExportFile.saveFileName(exportName.value);
+  } catch (e) {
+    exportStatus.textContent = e.message;
+    return;
+  }
   // git の差分にならないよう、書き出した時刻は入れず末尾に改行を付ける
   const text = `${JSON.stringify(getCurrentSettings(), null, 2)}\n`;
   let result;
   try {
-    result = await ExportFile.write(text, { choose });
+    result = await ExportFile.exportToFile(text, { chooseDir });
   } catch (e) {
-    showExportTarget(null, "Could not export. Use Change to pick the file again.");
+    exportStatus.textContent = "Could not export. Use Change folder to pick it again.";
     return;
   }
   if (!result) return; // ダイアログを閉じた
-  showExportTarget(null, `Exported to ${result.name}`);
+  await showExportTarget();
+  exportStatus.textContent = `Exported to ${result.path}`;
 }
+
+// ファイル名は欄から離れたとき・Enter で覚える。使えない名前なら覚えている名前に戻す
+exportName.addEventListener("change", async () => {
+  try {
+    exportName.value = await ExportFile.saveFileName(exportName.value);
+    exportStatus.textContent = "";
+  } catch (e) {
+    exportStatus.textContent = e.message;
+    exportName.value = await ExportFile.loadFileName();
+  }
+});
+exportName.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.isComposing) exportName.blur();
+});
 
 exportBtn.addEventListener("click", () => exportSettings(false));
 exportChange.addEventListener("click", () => exportSettings(true));
-ExportFile.loadHandle().then((handle) => showExportTarget(handle));
+showExportTarget();
 
 // ---- Import：JSONファイルを読み込んで反映 ----
 importBtn.addEventListener("click", () => importFile.click());

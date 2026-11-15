@@ -39,10 +39,14 @@
         <button id="export-btn" class="small" type="button" title="Export settings as JSON">Export</button>
         <button id="import-btn" class="small" type="button" title="Import settings from JSON">Import</button>
       </div>
-      <div class="export-target">
-        <span id="export-target-name">Export to: not set</span>
-        <button id="export-change" class="link" type="button" title="Choose another export file">Change</button>
+    </div>
+    <div class="export-target">
+      <div class="export-path">
+        <label for="export-name">Export to:</label>&nbsp;<span id="export-dir">(folder)</span>/<input id="export-name" type="text" spellcheck="false" autocomplete="off"
+               aria-label="Export file name" title="Export file name">
       </div>
+      <button id="export-change" class="link" type="button" title="Choose another export folder">Change folder</button>
+      <div id="export-status"></div>
     </div>
     <input id="import-file" type="file" accept="application/json,.json" hidden>
   </div>

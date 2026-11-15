@@ -22,7 +22,7 @@ mono_new_tab_clock/                                   <- git repo root
 ├── newtab.html        # markup: clock + gear button + settings panel
 ├── newtab.css         # all styling
 ├── newtab.js          # clock rendering + settings logic (localStorage)
-├── export-file.js     # Export target: remembers the picked file handle (IndexedDB), overwrites it
+├── export-file.js     # Export target: remembers the picked folder handle + file name (IndexedDB), overwrites the file
 ├── background.js      # service worker: keyboard-shortcut command -> message to newtab page
 └── .claude/skills/mono_new_tab_clock/SKILL.md   # THIS file — lives in-repo, git-managed
 ```
@@ -74,19 +74,26 @@ just Read this file.
   - **Opacity**: clock opacity. slider 0–100 -> `opacity = level/100`. Affects whole clock.
   - **Reset**: restores DEFAULTS (primary, full-width button).
   - **Export / Import**: small secondary buttons. Import reads a JSON file, validates, applies, saves.
-    **Export overwrites a file the user picked once** (2.1.0, 2026-11-15, user request: the user keeps
-    every ~/projects tool's exported settings in a git repo and wants diffs, so all exporting
-    extensions were aligned to yt-live-helper's approach). `export-file.js` (classic script,
-    `window.ExportFile`) does `showSaveFilePicker` (id `export-file`, suggested name
-    `mono_new_tab_clock-settings.json`) on first use and stores the `FileSystemFileHandle` in IndexedDB
-    `export-file`/`handles`/`exportFile`; later: `queryPermission` → `requestPermission` (after a browser
-    restart) → re-pick if denied. The new tab page is a normal page, so the picker works straight
-    from the click. Below the buttons a small line shows `Export to: <file name>` (only the name is
-    visible, not the folder) and a **Change** link (re-pick + export); after exporting it reads
-    `Exported to <name>`. The file has a trailing newline and no timestamp (it never had one).
-    **Brave has no `showSaveFilePicker`** → falls back to `<a download>` with the fixed name, line
-    reads `Export to: Downloads`, Change hidden. Verified in Brave Nightly (11 checks, picker stubbed
-    with an OPFS handle). **Not verified:** the real dialog and the re-permission prompt in Chrome.
+    **Export overwrites `<picked folder>/<file name>`** (2.1.0 picked a file; 2.2.0 picks a *folder*,
+    2026-11-15, user request: the user keeps every ~/projects tool's exported settings in a git repo and
+    wants diffs; a file handle only exposes the file name, so the panel could not show where it writes, and
+    the user wanted the file name held by the extension — same design as bookmark-set-opener 2.7.0).
+    `export-file.js` (classic script, `window.ExportFile`): `showDirectoryPicker` (id `export-file`,
+    `mode: "readwrite"`) on first use; IndexedDB `export-file`/`handles` keeps `exportDir` (folder handle)
+    and `fileName`. Name fallback: `fileName` → the 2.1.0 `exportFile` handle's name → 
+    `mono_new_tab_clock-settings.json`. Each export: `queryPermission` → `requestPermission` (after a browser
+    restart) → re-pick if denied, then `dir.getFileHandle(name, {create:true})`. Folder handles only expose the
+    folder's own name, not the full path.
+    UI: a full-width row **below** both columns (`flex-basis: 100%`; in the 220px right column the name
+    did not fit): `Export to: <folder>/[name input] Change folder` + `#export-status`. The row has
+    `contain: inline-size` so a long status message wraps instead of widening the fixed panel.
+    The name input saves on `change` (blur / Enter); names with `/ \ :`, a leading dot or empty are
+    rejected and reverted; `.json` is appended if missing. Export also saves the input first (typing then
+    clicking Export would otherwise race the `change` save).
+    File: trailing newline, no timestamp. **Brave has neither `showDirectoryPicker` nor
+    `showSaveFilePicker`** → `<a download>` with the input's name, folder shows `Downloads`, Change folder hidden.
+    Verified in Brave Nightly (10 checks, `showDirectoryPicker` stubbed to return OPFS folders).
+    **Not verified:** the real folder dialog and the re-permission prompt in Chrome.
 - **Fixed (not configurable)**, removed 2026-10-02 per user preference — don't re-add:
   - Position: always centered (`#clock` `left/top: 50%` + `translate(-50%,-50%)`), no dragging.
   - Size: fixed at the old default 1.5x (`#time` 12rem, `#date` 2.7rem); no Size slider.

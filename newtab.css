@@ -84,9 +84,10 @@ body.settings-open #gear-btn {
   position: fixed;
   bottom: 66px;
   left: 16px;
-  display: flex;             /* 左右2カラム */
+  display: flex;             /* 左右2カラム(Export の書き出し先は下に横幅いっぱい) */
+  flex-wrap: wrap;
   align-items: stretch;
-  gap: 24px;
+  gap: 12px 24px;
   padding: 16px;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.45);
@@ -156,11 +157,35 @@ body.settings-open #gear-btn {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Export の書き出し先(ファイル名だけ)と、選び直す Change */
+/* Export の書き出し先(フォルダ名 / ファイル名の欄)と、フォルダを選び直す Change folder */
+/* パネルの下に横幅いっぱいで置く(右の列だとファイル名が欄に収まらない) */
 .export-target {
-  font-size: 0.68rem;
+  flex-basis: 100%;
+  contain: inline-size;      /* 長いメッセージでパネルの幅を広げない(折り返す) */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 0.72rem;
   opacity: 0.7;
   overflow-wrap: anywhere;
+}
+.export-path {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+#export-status:empty {
+  display: none;
+}
+#export-name {
+  width: 20em;
+  padding: 1px 4px;
+  font: inherit;
+  color: #f5f5f5;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
 }
 #controls .export-target .link {
   padding: 0;
